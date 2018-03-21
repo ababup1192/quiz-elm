@@ -1,0 +1,74 @@
+@import url(~bulma/css/bulma.css);
+@import url(~sanitize.css/sanitize.css);
+
+#main {
+    display: flex;
+    flex-flow: column;
+}
+
+@media (min-width: 768px) {
+    #main {
+        margin: 0 20vw;
+    }
+}
+
+@media (max-width: 767px) {
+    #main {
+        width: 100%;
+    }
+}
+
+.problem {
+    letter-spacing: 0.2em;
+}
+
+.choice {
+    display: flex;
+    flex: 1;
+    height: 50vh;
+    list-style: none;
+    justify-content: space-around;
+}
+
+@media (min-width: 768px) {
+    .choice {
+        flex-flow: column;
+    }
+}
+
+@media (max-width: 767px) {
+    .choice {
+        flex-flow: row wrap;
+    }
+}
+
+.choice .button {
+    width: 40vw;
+    height: 10vh;
+}
+
+.choice {
+    text-align: left;
+}
+
+.num {
+    border: solid 0.05em #000000;
+    border-radius: 1em;
+    color: white;
+}
+
+.num1 {
+    background-color: #CC99FF;
+}
+
+.num2 {
+    background-color: #339966;
+}
+
+.num3 {
+    background-color: #3399FF;
+}
+
+.num4 {
+    background-color: #FF6633;
+}
