@@ -225,7 +225,7 @@ exports.i(__webpack_require__(5), "");
 exports.i(__webpack_require__(6), "");
 
 // module
-exports.push([module.i, "#main {\n    display: flex;\n    flex-flow: column;\n}\n\n@media (min-width: 768px) {\n    #main {\n        margin: 0 20vw;\n    }\n}\n\n@media (max-width: 767px) {\n    #main {\n        width: 100%;\n    }\n}\n\n.problem {\n    letter-spacing: 0.2em;\n}\n\n.choice {\n    display: flex;\n    flex: 1;\n    height: 50vh;\n    list-style: none;\n    justify-content: space-around;\n}\n\n@media (min-width: 768px) {\n    .choice {\n        flex-flow: column;\n    }\n}\n\n@media (max-width: 767px) {\n    .choice {\n        flex-flow: row wrap;\n    }\n}\n\n.choice .button {\n    width: 40vw;\n    height: 10vh;\n}\n\n.choice {\n    text-align: left;\n}\n\n.num {\n    border: solid 0.05em #000000;\n    border-radius: 1em;\n    color: white;\n}\n\n.num1 {\n    background-color: #CC99FF;\n}\n\n.num2 {\n    background-color: #339966;\n}\n\n.num3 {\n    background-color: #3399FF;\n}\n\n.num4 {\n    background-color: #FF6633;\n}\n\n@keyframes fadeOut {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n.correct {\n    animation-name: fadeOut;\n    animation-duration: 3s;\n    background-color: #fff;\n    border: solid 6px #00b1f4;\n    width: 60px;\n    height: 60px;\n    border-radius: 50px;\n    box-shadow: 0 0 0 3px #00b1f4;\n}\n\n.incorrect {\n    animation-name: fadeOut;\n    animation-duration: 3s;\n    display: inline-block;\n    position: relative;\n    margin: 0 20px 0 7px;\n    padding: 0;\n    width: 8px;\n    height: 40px;\n    background: red;\n    transform: rotate(45deg);\n}\n\n.incorrect:before {\n    display: block;\n    content: \"\";\n    position: absolute;\n    top: 50%;\n    left: -16px;\n    width: 40px;\n    height: 8px;\n    margin-top: -4px;\n    background: red;\n}", ""]);
+exports.push([module.i, "@keyframes fadeOut {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n@keyframes fadeIn {\n    from {\n        left: 3em; \n        opacity: 0;\n    }\n    to {\n        opacity: 1;\n        left: 0;\n    }\n}\n\n#main {\n    display: flex;\n    flex-flow: column;\n}\n\n@media (min-width: 768px) {\n    #main {\n        margin: 0 20vw;\n    }\n}\n\n@media (max-width: 767px) {\n    #main {\n        width: 100%;\n    }\n}\n\n.problem {\n    letter-spacing: 0.2em;\n}\n\n.choice {\n    display: flex;\n    flex: 1;\n    height: 50vh;\n    list-style: none;\n    justify-content: space-around;\n}\n\n@media (min-width: 768px) {\n    .choice {\n        flex-flow: column;\n    }\n}\n\n@media (max-width: 767px) {\n    .choice {\n        flex-flow: row wrap;\n    }\n}\n\n.fade-in-active {\n    animation-name: fadeIn;\n    animation-duration: 2s;\n}\n\n.choice .button {\n    width: 40vw;\n    height: 10vh;\n}\n\n.choice {\n    text-align: left;\n}\n\n.num {\n    border: solid 0.05em #000000;\n    border-radius: 1em;\n    color: white;\n}\n\n.num1 {\n    background-color: #CC99FF;\n}\n\n.num2 {\n    background-color: #339966;\n}\n\n.num3 {\n    background-color: #3399FF;\n}\n\n.num4 {\n    background-color: #FF6633;\n}\n\n.correct {\n    animation-name: fadeOut;\n    animation-duration: 3s;\n    background-color: #fff;\n    border: solid 6px #00b1f4;\n    width: 60px;\n    height: 60px;\n    border-radius: 50px;\n    box-shadow: 0 0 0 3px #00b1f4;\n}\n\n.incorrect {\n    animation-name: fadeOut;\n    animation-duration: 3s;\n    display: inline-block;\n    position: relative;\n    margin: 0 20px 0 7px;\n    padding: 0;\n    width: 8px;\n    height: 40px;\n    background: red;\n    transform: rotate(45deg);\n}\n\n.incorrect:before {\n    display: block;\n    content: \"\";\n    position: absolute;\n    top: 50%;\n    left: -16px;\n    width: 40px;\n    height: 8px;\n    margin-top: -4px;\n    background: red;\n}", ""]);
 
 // exports
 
@@ -15080,6 +15080,7 @@ var _user$project$Main$Model = F5(
 	function (a, b, c, d, e) {
 		return {exercises: a, count: b, numOfCorrectAns: c, choiceTime: d, isAnimation: e};
 	});
+var _user$project$Main$None = {ctor: 'None'};
 var _user$project$Main$ChoiceTime = function (a) {
 	return {ctor: 'ChoiceTime', _0: a};
 };
@@ -15112,7 +15113,7 @@ var _user$project$Main$update = F2(
 							choiceTime: _elm_lang$core$Maybe$Just(_p2._0)
 						}),
 					{ctor: '[]'});
-			default:
+			case 'Tick':
 				var _p3 = _p1.choiceTime;
 				if (_p3.ctor === 'Just') {
 					return (_elm_lang$core$Native_Utils.cmp(
@@ -15139,6 +15140,11 @@ var _user$project$Main$update = F2(
 						_p5,
 						{ctor: '[]'});
 				}
+			default:
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_p5,
+					{ctor: '[]'});
 		}
 	});
 var _user$project$Main$Tick = function (a) {
@@ -15152,6 +15158,10 @@ var _user$project$Main$Next = function (a) {
 };
 var _user$project$Main$choiceView = F2(
 	function (choices, isAnimation) {
+		var nextMsg = function (isCorrect) {
+			return isAnimation ? _elm_lang$html$Html_Events$onClick(_user$project$Main$None) : _elm_lang$html$Html_Events$onClick(
+				_user$project$Main$Next(isCorrect));
+		};
 		var animationClass = function (isCorrect) {
 			return isCorrect ? _elm_lang$html$Html_Attributes$class('correct') : _elm_lang$html$Html_Attributes$class('incorrect');
 		};
@@ -15165,6 +15175,7 @@ var _user$project$Main$choiceView = F2(
 				},
 				{ctor: '[]'}) : _elm_lang$html$Html$text('');
 		};
+		var fadeInToggle = isAnimation ? '' : ' fade-in-active';
 		var choice = A2(
 			_elm_lang$core$List$indexedMap,
 			F2(
@@ -15175,11 +15186,11 @@ var _user$project$Main$choiceView = F2(
 						_elm_lang$html$Html$a,
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class('button is-rounded'),
+							_0: _elm_lang$html$Html_Attributes$class(
+								A2(_elm_lang$core$Basics_ops['++'], 'button is-rounded', fadeInToggle)),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(
-									_user$project$Main$Next(_p8)),
+								_0: nextMsg(_p8),
 								_1: {ctor: '[]'}
 							}
 						},
@@ -15267,7 +15278,7 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Main.Msg":{"args":[],"tags":{"Next":["Bool"],"Tick":["Time.Time"],"ChoiceTime":["Time.Time"]}}},"aliases":{"Time.Time":{"args":[],"type":"Float"}},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Main.Msg":{"args":[],"tags":{"Next":["Bool"],"None":[],"Tick":["Time.Time"],"ChoiceTime":["Time.Time"]}}},"aliases":{"Time.Time":{"args":[],"type":"Float"}},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])
