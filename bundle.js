@@ -225,7 +225,7 @@ exports.i(__webpack_require__(5), "");
 exports.i(__webpack_require__(6), "");
 
 // module
-exports.push([module.i, "#main {\n    display: flex;\n    flex-flow: column;\n}\n\n@media (min-width: 768px) {\n    #main {\n        margin: 0 20vw;\n    }\n}\n\n@media (max-width: 767px) {\n    #main {\n        width: 100%;\n    }\n}\n\n.problem {\n    letter-spacing: 0.2em;\n}\n\n.choice {\n    display: flex;\n    flex: 1;\n    height: 50vh;\n    list-style: none;\n    justify-content: space-around;\n}\n\n@media (min-width: 768px) {\n    .choice {\n        flex-flow: column;\n    }\n}\n\n@media (max-width: 767px) {\n    .choice {\n        flex-flow: row wrap;\n    }\n}\n\n.choice .button {\n    width: 40vw;\n    height: 10vh;\n}\n\n.choice {\n    text-align: left;\n}\n\n.num {\n    border: solid 0.05em #000000;\n    border-radius: 1em;\n    color: white;\n}\n\n.num1 {\n    background-color: #CC99FF;\n}\n\n.num2 {\n    background-color: #339966;\n}\n\n.num3 {\n    background-color: #3399FF;\n}\n\n.num4 {\n    background-color: #FF6633;\n}", ""]);
+exports.push([module.i, "#main {\n    display: flex;\n    flex-flow: column;\n}\n\n@media (min-width: 768px) {\n    #main {\n        margin: 0 20vw;\n    }\n}\n\n@media (max-width: 767px) {\n    #main {\n        width: 100%;\n    }\n}\n\n.problem {\n    letter-spacing: 0.2em;\n}\n\n.choice {\n    display: flex;\n    flex: 1;\n    height: 50vh;\n    list-style: none;\n    justify-content: space-around;\n}\n\n@media (min-width: 768px) {\n    .choice {\n        flex-flow: column;\n    }\n}\n\n@media (max-width: 767px) {\n    .choice {\n        flex-flow: row wrap;\n    }\n}\n\n.choice .button {\n    width: 40vw;\n    height: 10vh;\n}\n\n.choice {\n    text-align: left;\n}\n\n.num {\n    border: solid 0.05em #000000;\n    border-radius: 1em;\n    color: white;\n}\n\n.num1 {\n    background-color: #CC99FF;\n}\n\n.num2 {\n    background-color: #339966;\n}\n\n.num3 {\n    background-color: #3399FF;\n}\n\n.num4 {\n    background-color: #FF6633;\n}\n\n@keyframes fadeOut {\n    from {\n        opacity: 1;\n    }\n    to {\n        opacity: 0;\n    }\n}\n\n.correct {\n    animation-name: fadeOut;\n    animation-duration: 3s;\n    background-color: #fff;\n    border: solid 6px #00b1f4;\n    width: 60px;\n    height: 60px;\n    border-radius: 50px;\n    box-shadow: 0 0 0 3px #00b1f4;\n}\n\n.incorrect {\n    animation-name: fadeOut;\n    animation-duration: 3s;\n    display: inline-block;\n    position: relative;\n    margin: 0 20px 0 7px;\n    padding: 0;\n    width: 8px;\n    height: 40px;\n    background: red;\n    transform: rotate(45deg);\n}\n\n.incorrect:before {\n    display: block;\n    content: \"\";\n    position: absolute;\n    top: 50%;\n    left: -16px;\n    width: 40px;\n    height: 8px;\n    margin-top: -4px;\n    background: red;\n}", ""]);
 
 // exports
 
@@ -7613,6 +7613,221 @@ var _elm_lang$core$Task$cmdMap = F2(
 	});
 _elm_lang$core$Native_Platform.effectManagers['Task'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Task$init, onEffects: _elm_lang$core$Task$onEffects, onSelfMsg: _elm_lang$core$Task$onSelfMsg, tag: 'cmd', cmdMap: _elm_lang$core$Task$cmdMap};
 
+//import Native.Scheduler //
+
+var _elm_lang$core$Native_Time = function() {
+
+var now = _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+{
+	callback(_elm_lang$core$Native_Scheduler.succeed(Date.now()));
+});
+
+function setInterval_(interval, task)
+{
+	return _elm_lang$core$Native_Scheduler.nativeBinding(function(callback)
+	{
+		var id = setInterval(function() {
+			_elm_lang$core$Native_Scheduler.rawSpawn(task);
+		}, interval);
+
+		return function() { clearInterval(id); };
+	});
+}
+
+return {
+	now: now,
+	setInterval_: F2(setInterval_)
+};
+
+}();
+var _elm_lang$core$Time$setInterval = _elm_lang$core$Native_Time.setInterval_;
+var _elm_lang$core$Time$spawnHelp = F3(
+	function (router, intervals, processes) {
+		var _p0 = intervals;
+		if (_p0.ctor === '[]') {
+			return _elm_lang$core$Task$succeed(processes);
+		} else {
+			var _p1 = _p0._0;
+			var spawnRest = function (id) {
+				return A3(
+					_elm_lang$core$Time$spawnHelp,
+					router,
+					_p0._1,
+					A3(_elm_lang$core$Dict$insert, _p1, id, processes));
+			};
+			var spawnTimer = _elm_lang$core$Native_Scheduler.spawn(
+				A2(
+					_elm_lang$core$Time$setInterval,
+					_p1,
+					A2(_elm_lang$core$Platform$sendToSelf, router, _p1)));
+			return A2(_elm_lang$core$Task$andThen, spawnRest, spawnTimer);
+		}
+	});
+var _elm_lang$core$Time$addMySub = F2(
+	function (_p2, state) {
+		var _p3 = _p2;
+		var _p6 = _p3._1;
+		var _p5 = _p3._0;
+		var _p4 = A2(_elm_lang$core$Dict$get, _p5, state);
+		if (_p4.ctor === 'Nothing') {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
+				{
+					ctor: '::',
+					_0: _p6,
+					_1: {ctor: '[]'}
+				},
+				state);
+		} else {
+			return A3(
+				_elm_lang$core$Dict$insert,
+				_p5,
+				{ctor: '::', _0: _p6, _1: _p4._0},
+				state);
+		}
+	});
+var _elm_lang$core$Time$inMilliseconds = function (t) {
+	return t;
+};
+var _elm_lang$core$Time$millisecond = 1;
+var _elm_lang$core$Time$second = 1000 * _elm_lang$core$Time$millisecond;
+var _elm_lang$core$Time$minute = 60 * _elm_lang$core$Time$second;
+var _elm_lang$core$Time$hour = 60 * _elm_lang$core$Time$minute;
+var _elm_lang$core$Time$inHours = function (t) {
+	return t / _elm_lang$core$Time$hour;
+};
+var _elm_lang$core$Time$inMinutes = function (t) {
+	return t / _elm_lang$core$Time$minute;
+};
+var _elm_lang$core$Time$inSeconds = function (t) {
+	return t / _elm_lang$core$Time$second;
+};
+var _elm_lang$core$Time$now = _elm_lang$core$Native_Time.now;
+var _elm_lang$core$Time$onSelfMsg = F3(
+	function (router, interval, state) {
+		var _p7 = A2(_elm_lang$core$Dict$get, interval, state.taggers);
+		if (_p7.ctor === 'Nothing') {
+			return _elm_lang$core$Task$succeed(state);
+		} else {
+			var tellTaggers = function (time) {
+				return _elm_lang$core$Task$sequence(
+					A2(
+						_elm_lang$core$List$map,
+						function (tagger) {
+							return A2(
+								_elm_lang$core$Platform$sendToApp,
+								router,
+								tagger(time));
+						},
+						_p7._0));
+			};
+			return A2(
+				_elm_lang$core$Task$andThen,
+				function (_p8) {
+					return _elm_lang$core$Task$succeed(state);
+				},
+				A2(_elm_lang$core$Task$andThen, tellTaggers, _elm_lang$core$Time$now));
+		}
+	});
+var _elm_lang$core$Time$subscription = _elm_lang$core$Native_Platform.leaf('Time');
+var _elm_lang$core$Time$State = F2(
+	function (a, b) {
+		return {taggers: a, processes: b};
+	});
+var _elm_lang$core$Time$init = _elm_lang$core$Task$succeed(
+	A2(_elm_lang$core$Time$State, _elm_lang$core$Dict$empty, _elm_lang$core$Dict$empty));
+var _elm_lang$core$Time$onEffects = F3(
+	function (router, subs, _p9) {
+		var _p10 = _p9;
+		var rightStep = F3(
+			function (_p12, id, _p11) {
+				var _p13 = _p11;
+				return {
+					ctor: '_Tuple3',
+					_0: _p13._0,
+					_1: _p13._1,
+					_2: A2(
+						_elm_lang$core$Task$andThen,
+						function (_p14) {
+							return _p13._2;
+						},
+						_elm_lang$core$Native_Scheduler.kill(id))
+				};
+			});
+		var bothStep = F4(
+			function (interval, taggers, id, _p15) {
+				var _p16 = _p15;
+				return {
+					ctor: '_Tuple3',
+					_0: _p16._0,
+					_1: A3(_elm_lang$core$Dict$insert, interval, id, _p16._1),
+					_2: _p16._2
+				};
+			});
+		var leftStep = F3(
+			function (interval, taggers, _p17) {
+				var _p18 = _p17;
+				return {
+					ctor: '_Tuple3',
+					_0: {ctor: '::', _0: interval, _1: _p18._0},
+					_1: _p18._1,
+					_2: _p18._2
+				};
+			});
+		var newTaggers = A3(_elm_lang$core$List$foldl, _elm_lang$core$Time$addMySub, _elm_lang$core$Dict$empty, subs);
+		var _p19 = A6(
+			_elm_lang$core$Dict$merge,
+			leftStep,
+			bothStep,
+			rightStep,
+			newTaggers,
+			_p10.processes,
+			{
+				ctor: '_Tuple3',
+				_0: {ctor: '[]'},
+				_1: _elm_lang$core$Dict$empty,
+				_2: _elm_lang$core$Task$succeed(
+					{ctor: '_Tuple0'})
+			});
+		var spawnList = _p19._0;
+		var existingDict = _p19._1;
+		var killTask = _p19._2;
+		return A2(
+			_elm_lang$core$Task$andThen,
+			function (newProcesses) {
+				return _elm_lang$core$Task$succeed(
+					A2(_elm_lang$core$Time$State, newTaggers, newProcesses));
+			},
+			A2(
+				_elm_lang$core$Task$andThen,
+				function (_p20) {
+					return A3(_elm_lang$core$Time$spawnHelp, router, spawnList, existingDict);
+				},
+				killTask));
+	});
+var _elm_lang$core$Time$Every = F2(
+	function (a, b) {
+		return {ctor: 'Every', _0: a, _1: b};
+	});
+var _elm_lang$core$Time$every = F2(
+	function (interval, tagger) {
+		return _elm_lang$core$Time$subscription(
+			A2(_elm_lang$core$Time$Every, interval, tagger));
+	});
+var _elm_lang$core$Time$subMap = F2(
+	function (f, _p21) {
+		var _p22 = _p21;
+		return A2(
+			_elm_lang$core$Time$Every,
+			_p22._0,
+			function (_p23) {
+				return f(
+					_p22._1(_p23));
+			});
+	});
+_elm_lang$core$Native_Platform.effectManagers['Time'] = {pkg: 'elm-lang/core', init: _elm_lang$core$Time$init, onEffects: _elm_lang$core$Time$onEffects, onSelfMsg: _elm_lang$core$Time$onSelfMsg, tag: 'sub', subMap: _elm_lang$core$Time$subMap};
+
 //import Maybe, Native.Array, Native.List, Native.Utils, Result //
 
 var _elm_lang$core$Native_Json = function() {
@@ -14750,25 +14965,9 @@ var _user$project$Main$questionView = function (question) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Main$update = F2(
-	function (msg, _p0) {
-		var _p1 = _p0;
-		var _p4 = _p1;
-		var _p3 = _p1.count;
-		var _p2 = msg;
-		return (_elm_lang$core$Native_Utils.cmp(
-			_p3,
-			_elm_lang$core$List$length(_p1.exercises) - 1) < 0) ? A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			_elm_lang$core$Native_Utils.update(
-				_p4,
-				{count: _p3 + 1}),
-			{ctor: '[]'}) : A2(
-			_elm_lang$core$Platform_Cmd_ops['!'],
-			_elm_lang$core$Native_Utils.update(
-				_p4,
-				{count: 0}),
-			{ctor: '[]'});
+var _user$project$Main$Choice = F2(
+	function (a, b) {
+		return {content: a, isCorrect: b};
 	});
 var _user$project$Main$init = {
 	ctor: '_Tuple2',
@@ -14779,16 +14978,16 @@ var _user$project$Main$init = {
 				question: 'イタリアのブランド「ブルガリ」。アルファベットのつづりの二文字目は何？',
 				choices: {
 					ctor: '::',
-					_0: '選択肢1',
+					_0: A2(_user$project$Main$Choice, '正解', true),
 					_1: {
 						ctor: '::',
-						_0: '選択肢2',
+						_0: A2(_user$project$Main$Choice, '不正解', false),
 						_1: {
 							ctor: '::',
-							_0: '選択肢3',
+							_0: A2(_user$project$Main$Choice, '不正解', false),
 							_1: {
 								ctor: '::',
-								_0: '選択肢4',
+								_0: A2(_user$project$Main$Choice, '不正解', false),
 								_1: {ctor: '[]'}
 							}
 						}
@@ -14801,16 +15000,16 @@ var _user$project$Main$init = {
 					question: 'ドラクエ６の最弱モンスターは？',
 					choices: {
 						ctor: '::',
-						_0: '選択肢5',
+						_0: A2(_user$project$Main$Choice, '不正解', false),
 						_1: {
 							ctor: '::',
-							_0: '選択肢6',
+							_0: A2(_user$project$Main$Choice, '正解', true),
 							_1: {
 								ctor: '::',
-								_0: '選択肢7',
+								_0: A2(_user$project$Main$Choice, '不正解', false),
 								_1: {
 									ctor: '::',
-									_0: '選択肢8',
+									_0: A2(_user$project$Main$Choice, '不正解', false),
 									_1: {ctor: '[]'}
 								}
 							}
@@ -14823,16 +15022,16 @@ var _user$project$Main$init = {
 						question: 'Scalaのパターンマッチ構文は？',
 						choices: {
 							ctor: '::',
-							_0: '選択肢9',
+							_0: A2(_user$project$Main$Choice, '不正解', false),
 							_1: {
 								ctor: '::',
-								_0: '選択肢10',
+								_0: A2(_user$project$Main$Choice, '不正解', false),
 								_1: {
 									ctor: '::',
-									_0: '選択肢11',
+									_0: A2(_user$project$Main$Choice, '正解', true),
 									_1: {
 										ctor: '::',
-										_0: '選択肢12',
+										_0: A2(_user$project$Main$Choice, '不正解', false),
 										_1: {ctor: '[]'}
 									}
 								}
@@ -14845,16 +15044,16 @@ var _user$project$Main$init = {
 							question: 'お腹すいた',
 							choices: {
 								ctor: '::',
-								_0: '選択肢13',
+								_0: A2(_user$project$Main$Choice, '不正解', false),
 								_1: {
 									ctor: '::',
-									_0: '選択肢14',
+									_0: A2(_user$project$Main$Choice, '不正解', false),
 									_1: {
 										ctor: '::',
-										_0: '選択肢15',
+										_0: A2(_user$project$Main$Choice, '不正解', false),
 										_1: {
 											ctor: '::',
-											_0: '選択肢16',
+											_0: A2(_user$project$Main$Choice, '正解', true),
 											_1: {ctor: '[]'}
 										}
 									}
@@ -14866,7 +15065,10 @@ var _user$project$Main$init = {
 				}
 			}
 		},
-		count: 0
+		count: 0,
+		numOfCorrectAns: 0,
+		choiceTime: _elm_lang$core$Maybe$Nothing,
+		isAnimation: false
 	},
 	_1: _elm_lang$core$Platform_Cmd$none
 };
@@ -14874,94 +15076,184 @@ var _user$project$Main$Exercise = F2(
 	function (a, b) {
 		return {question: a, choices: b};
 	});
-var _user$project$Main$Model = F2(
-	function (a, b) {
-		return {exercises: a, count: b};
+var _user$project$Main$Model = F5(
+	function (a, b, c, d, e) {
+		return {exercises: a, count: b, numOfCorrectAns: c, choiceTime: d, isAnimation: e};
 	});
-var _user$project$Main$Next = {ctor: 'Next'};
-var _user$project$Main$choiceView = function (choices) {
-	var choice = A2(
-		_elm_lang$core$List$indexedMap,
-		F2(
-			function (index, choice) {
+var _user$project$Main$ChoiceTime = function (a) {
+	return {ctor: 'ChoiceTime', _0: a};
+};
+var _user$project$Main$update = F2(
+	function (msg, _p0) {
+		var _p1 = _p0;
+		var _p5 = _p1;
+		var _p4 = _p1.count;
+		var _p2 = msg;
+		switch (_p2.ctor) {
+			case 'Next':
+				var newNumOfCorrect = _p1.numOfCorrectAns + (_p2._0 ? 1 : 0);
 				return A2(
-					_elm_lang$html$Html$a,
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p5,
+						{numOfCorrectAns: newNumOfCorrect}),
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class('button is-rounded'),
-						_1: {
+						_0: A2(_elm_lang$core$Task$perform, _user$project$Main$ChoiceTime, _elm_lang$core$Time$now),
+						_1: {ctor: '[]'}
+					});
+			case 'ChoiceTime':
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						_p5,
+						{
+							isAnimation: true,
+							choiceTime: _elm_lang$core$Maybe$Just(_p2._0)
+						}),
+					{ctor: '[]'});
+			default:
+				var _p3 = _p1.choiceTime;
+				if (_p3.ctor === 'Just') {
+					return (_elm_lang$core$Native_Utils.cmp(
+						_elm_lang$core$Time$inSeconds(_p2._0) - _elm_lang$core$Time$inSeconds(_p3._0),
+						2.0) > 0) ? ((_elm_lang$core$Native_Utils.cmp(
+						_p4,
+						_elm_lang$core$List$length(_p1.exercises) - 1) < 0) ? A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							_p5,
+							{count: _p4 + 1, choiceTime: _elm_lang$core$Maybe$Nothing, isAnimation: false}),
+						{ctor: '[]'}) : A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							_p5,
+							{count: 0, choiceTime: _elm_lang$core$Maybe$Nothing, isAnimation: false}),
+						{ctor: '[]'})) : A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_p5,
+						{ctor: '[]'});
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_p5,
+						{ctor: '[]'});
+				}
+		}
+	});
+var _user$project$Main$Tick = function (a) {
+	return {ctor: 'Tick', _0: a};
+};
+var _user$project$Main$subscriptions = function (model) {
+	return A2(_elm_lang$core$Time$every, 500 * _elm_lang$core$Time$millisecond, _user$project$Main$Tick);
+};
+var _user$project$Main$Next = function (a) {
+	return {ctor: 'Next', _0: a};
+};
+var _user$project$Main$choiceView = F2(
+	function (choices, isAnimation) {
+		var animationClass = function (isCorrect) {
+			return isCorrect ? _elm_lang$html$Html_Attributes$class('correct') : _elm_lang$html$Html_Attributes$class('incorrect');
+		};
+		var choiceAnimation = function (isCorrect) {
+			return isAnimation ? A2(
+				_elm_lang$html$Html$span,
+				{
+					ctor: '::',
+					_0: animationClass(isCorrect),
+					_1: {ctor: '[]'}
+				},
+				{ctor: '[]'}) : _elm_lang$html$Html$text('');
+		};
+		var choice = A2(
+			_elm_lang$core$List$indexedMap,
+			F2(
+				function (index, _p6) {
+					var _p7 = _p6;
+					var _p8 = _p7.isCorrect;
+					return A2(
+						_elm_lang$html$Html$a,
+						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Next),
-							_1: {ctor: '[]'}
-						}
-					},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$span,
-							{
+							_0: _elm_lang$html$Html_Attributes$class('button is-rounded'),
+							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$class(
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										'icon is-small num num',
-										_elm_lang$core$Basics$toString(index + 1))),
+								_0: _elm_lang$html$Html_Events$onClick(
+									_user$project$Main$Next(_p8)),
 								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(
-									_elm_lang$core$Basics$toString(index + 1)),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
+							}
+						},
+						{
 							ctor: '::',
 							_0: A2(
 								_elm_lang$html$Html$span,
-								{ctor: '[]'},
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html$text(choice),
+									_0: _elm_lang$html$Html_Attributes$class(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'icon is-small num num',
+											_elm_lang$core$Basics$toString(index + 1))),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(
+										_elm_lang$core$Basics$toString(index + 1)),
 									_1: {ctor: '[]'}
 								}),
-							_1: {ctor: '[]'}
-						}
-					});
-			}),
-		choices);
-	return A2(
-		_elm_lang$html$Html$article,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class('message'),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class('message-body choice'),
-					_1: {ctor: '[]'}
-				},
-				choice),
-			_1: {ctor: '[]'}
-		});
-};
-var _user$project$Main$view = function (_p5) {
-	var _p6 = _p5;
-	var _p7 = A2(_elm_community$list_extra$List_Extra_ops['!!'], _p6.exercises, _p6.count);
-	if (_p7.ctor === 'Just') {
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$span,
+									{ctor: '[]'},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(_p7.content),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: choiceAnimation(_p8),
+									_1: {ctor: '[]'}
+								}
+							}
+						});
+				}),
+			choices);
+		return A2(
+			_elm_lang$html$Html$article,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$class('message'),
+				_1: {ctor: '[]'}
+			},
+			{
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('message-body choice'),
+						_1: {ctor: '[]'}
+					},
+					choice),
+				_1: {ctor: '[]'}
+			});
+	});
+var _user$project$Main$view = function (_p9) {
+	var _p10 = _p9;
+	var _p11 = A2(_elm_community$list_extra$List_Extra_ops['!!'], _p10.exercises, _p10.count);
+	if (_p11.ctor === 'Just') {
 		return A2(
 			_elm_lang$html$Html$div,
 			{ctor: '[]'},
 			{
 				ctor: '::',
-				_0: _user$project$Main$questionView(_p7._0.question),
+				_0: _user$project$Main$questionView(_p11._0.question),
 				_1: {
 					ctor: '::',
-					_0: _user$project$Main$choiceView(_p7._0.choices),
+					_0: A2(_user$project$Main$choiceView, _p11._0.choices, _p10.isAnimation),
 					_1: {ctor: '[]'}
 				}
 			});
@@ -14970,17 +15262,12 @@ var _user$project$Main$view = function (_p5) {
 	}
 };
 var _user$project$Main$main = _elm_lang$html$Html$program(
-	{
-		view: _user$project$Main$view,
-		init: _user$project$Main$init,
-		update: _user$project$Main$update,
-		subscriptions: _elm_lang$core$Basics$always(_elm_lang$core$Platform_Sub$none)
-	})();
+	{view: _user$project$Main$view, init: _user$project$Main$init, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})();
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Main.Msg":{"args":[],"tags":{"Next":[]}}},"aliases":{},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"unions":{"Main.Msg":{"args":[],"tags":{"Next":["Bool"],"Tick":["Time.Time"],"ChoiceTime":["Time.Time"]}}},"aliases":{"Time.Time":{"args":[],"type":"Float"}},"message":"Main.Msg"},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])
