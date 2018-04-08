@@ -1,6 +1,5 @@
 @import url(~bulma/css/bulma.css);
 @import url(~sanitize.css/sanitize.css);
-
 #main {
     display: flex;
     flex-flow: column;
@@ -71,4 +70,49 @@
 
 .num4 {
     background-color: #FF6633;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.correct {
+    animation-name: fadeOut;
+    animation-duration: 3s;
+    background-color: #fff;
+    border: solid 6px #00b1f4;
+    width: 60px;
+    height: 60px;
+    border-radius: 50px;
+    box-shadow: 0 0 0 3px #00b1f4;
+}
+
+.incorrect {
+    animation-name: fadeOut;
+    animation-duration: 3s;
+    display: inline-block;
+    position: relative;
+    margin: 0 20px 0 7px;
+    padding: 0;
+    width: 8px;
+    height: 40px;
+    background: red;
+    transform: rotate(45deg);
+}
+
+.incorrect:before {
+    display: block;
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: -16px;
+    width: 40px;
+    height: 8px;
+    margin-top: -4px;
+    background: red;
 }

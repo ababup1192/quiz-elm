@@ -4,13 +4,15 @@ import Html exposing (Html, text, a, div, span, article)
 import Html.Attributes exposing (src, class)
 import Html.Events exposing (onClick)
 import List.Extra exposing ((!!))
+import Time exposing (Time, millisecond, inSeconds)
+import Task
 
 
 ---- MODEL ----
 
 
 type alias Choice =
-    String
+    { content : String, isCorrect : Bool }
 
 
 type alias Exercise =
@@ -18,26 +20,29 @@ type alias Exercise =
 
 
 type alias Model =
-    { exercises : List Exercise, count : Int }
+    { exercises : List Exercise, count : Int, numOfCorrectAns : Int, choiceTime : Maybe Time, isAnimation : Bool }
 
 
 init : ( Model, Cmd Msg )
 init =
     ( { exercises =
             [ { question = "イタリアのブランド「ブルガリ」。アルファベットのつづりの二文字目は何？"
-              , choices = [ "選択肢1", "選択肢2", "選択肢3", "選択肢4" ]
+              , choices = [ Choice "正解" True, Choice "不正解" False, Choice "不正解" False, Choice "不正解" False ]
               }
             , { question = "ドラクエ６の最弱モンスターは？"
-              , choices = [ "選択肢5", "選択肢6", "選択肢7", "選択肢8" ]
+              , choices = [ Choice "不正解" False, Choice "正解" True, Choice "不正解" False, Choice "不正解" False ]
               }
             , { question = "Scalaのパターンマッチ構文は？"
-              , choices = [ "選択肢9", "選択肢10", "選択肢11", "選択肢12" ]
+              , choices = [ Choice "不正解" False, Choice "不正解" False, Choice "正解" True, Choice "不正解" False ]
               }
             , { question = "お腹すいた"
-              , choices = [ "選択肢13", "選択肢14", "選択肢15", "選択肢16" ]
+              , choices = [ Choice "不正解" False, Choice "不正解" False, Choice "不正解" False, Choice "正解" True ]
               }
             ]
       , count = 0
+      , numOfCorrectAns = 0
+      , choiceTime = Nothing
+      , isAnimation = False
       }
     , Cmd.none
     )
@@ -48,17 +53,42 @@ init =
 
 
 type Msg
-    = Next
+    = Next Bool
+    | Tick Time
+    | ChoiceTime Time
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
-update msg ({ exercises, count } as model) =
+update msg ({ exercises, count, numOfCorrectAns, choiceTime } as model) =
     case msg of
-        Next ->
-            if count < (List.length exercises - 1) then
-                { model | count = count + 1 } ! []
-            else
-                { model | count = 0 } ! []
+        Next isCorrect ->
+            let
+                newNumOfCorrect =
+                    numOfCorrectAns
+                        + (if isCorrect then
+                            1
+                           else
+                            0
+                          )
+            in
+                { model | numOfCorrectAns = newNumOfCorrect } ! [ Task.perform ChoiceTime Time.now ]
+
+        ChoiceTime ct ->
+            { model | isAnimation = True, choiceTime = Just ct } ! []
+
+        Tick newTime ->
+            case choiceTime of
+                Just ct ->
+                    if (inSeconds newTime - inSeconds ct) > 2.0 then
+                        if count < (List.length exercises - 1) then
+                            { model | count = count + 1, choiceTime = Nothing, isAnimation = False } ! []
+                        else
+                            { model | count = 0, choiceTime = Nothing, isAnimation = False } ! []
+                    else
+                        model ! []
+
+                Nothing ->
+                    model ! []
 
 
 
@@ -66,12 +96,12 @@ update msg ({ exercises, count } as model) =
 
 
 view : Model -> Html Msg
-view { exercises, count } =
+view { exercises, count, isAnimation } =
     case (exercises !! count) of
         Just { question, choices } ->
             div []
                 [ questionView question
-                , choiceView choices
+                , choiceView choices isAnimation
                 ]
 
         Nothing ->
@@ -86,17 +116,30 @@ questionView question =
         ]
 
 
-choiceView : List Choice -> Html Msg
-choiceView choices =
+choiceView : List Choice -> Bool -> Html Msg
+choiceView choices isAnimation =
     let
+        animationClass isCorrect =
+            if isCorrect then
+                class "correct"
+            else
+                class "incorrect"
+
+        choiceAnimation isCorrect =
+            if isAnimation then
+                span [ animationClass isCorrect ] []
+            else
+                text ""
+
         choice =
             List.indexedMap
-                (\index choice ->
-                    a [ class "button is-rounded", onClick Next ]
+                (\index { content, isCorrect } ->
+                    a [ class "button is-rounded", onClick <| Next isCorrect ]
                         [ span [ class <| "icon is-small num num" ++ toString (index + 1) ]
                             [ text <| toString (index + 1) ]
                         , span []
-                            [ text choice ]
+                            [ text content ]
+                        , choiceAnimation isCorrect
                         ]
                 )
                 choices
@@ -105,6 +148,11 @@ choiceView choices =
             [ div [ class "message-body choice" ]
                 choice
             ]
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Time.every (500 * millisecond) Tick
 
 
 
@@ -117,5 +165,5 @@ main =
         { view = view
         , init = init
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = subscriptions
         }
