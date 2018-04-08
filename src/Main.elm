@@ -56,6 +56,7 @@ type Msg
     = Next Bool
     | Tick Time
     | ChoiceTime Time
+    | None
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -90,6 +91,9 @@ update msg ({ exercises, count, numOfCorrectAns, choiceTime } as model) =
                 Nothing ->
                     model ! []
 
+        None ->
+            model ! []
+
 
 
 ---- VIEW ----
@@ -119,6 +123,12 @@ questionView question =
 choiceView : List Choice -> Bool -> Html Msg
 choiceView choices isAnimation =
     let
+        fadeInToggle =
+            if isAnimation then
+                ""
+            else
+                " fade-in-active"
+
         animationClass isCorrect =
             if isCorrect then
                 class "correct"
@@ -131,10 +141,16 @@ choiceView choices isAnimation =
             else
                 text ""
 
+        nextMsg isCorrect =
+            if isAnimation then
+                onClick <| None
+            else
+                onClick <| Next isCorrect
+
         choice =
             List.indexedMap
                 (\index { content, isCorrect } ->
-                    a [ class "button is-rounded", onClick <| Next isCorrect ]
+                    a [ class <| "button is-rounded" ++ fadeInToggle, nextMsg isCorrect ]
                         [ span [ class <| "icon is-small num num" ++ toString (index + 1) ]
                             [ text <| toString (index + 1) ]
                         , span []
