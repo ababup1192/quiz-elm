@@ -1,7 +1,7 @@
 module Main exposing (..)
 
-import Html exposing (Html, text, a, div, span, article)
-import Html.Attributes exposing (src, class)
+import Html exposing (Html, text, a, p, br, div, span, article, header, footer)
+import Html.Attributes exposing (src, class, href)
 import Html.Events exposing (onClick)
 import List.Extra exposing ((!!))
 import Time exposing (Time, second)
@@ -88,16 +88,71 @@ update msg ({ exercises, count, numOfCorrectAns } as model) =
 
 
 view : Model -> Html Msg
-view { exercises, count, isAnimation } =
-    case (exercises !! count) of
-        Just { question, choices } ->
-            div []
-                [ questionView question
-                , choiceView choices isAnimation
-                ]
+view model =
+    cardList
 
-        Nothing ->
-            text ""
+
+
+{-
+   view { exercises, count, isAnimation } =
+       case (exercises !! count) of
+           Just { question, choices } ->
+               div []
+                   [ questionView question
+                   , choiceView choices isAnimation
+                   ]
+
+           Nothing ->
+               text ""
+-}
+
+
+cardList : Html Msg
+cardList =
+    div [ class "cardList" ]
+        [ card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        , card
+        ]
+
+
+card : Html Msg
+card =
+    div [ class "card" ]
+        [ header [ class "card-header" ]
+            [ p [ class "card-header-title" ]
+                [ text "計算量クイズ[初級]" ]
+            ]
+        , div [ class "card-content" ]
+            [ div [ class "content" ]
+                [ text "Scalaのデータ構造の計算量を当てるクイズだよ！ゴニョゴニョゴニョゴニョゴニョゴニョゴニョゴニョゴニョゴニョゴニョゴニョゴニョゴニョゴニョ"
+                , br [] []
+                , text "達成率 30%"
+                ]
+            ]
+        , footer [ class "card-footer" ]
+            [ a [ href "#", class "card-footer-item" ]
+                [ text "問題を解く" ]
+            ]
+        ]
+
+
+resultView : Html Msg
+resultView =
+    text "何問解けました"
 
 
 questionView : String -> Html Msg

@@ -11,13 +11,24 @@
 
 @keyframes fadeIn {
     from {
-        left: 3em; 
+        left: 3em;
         opacity: 0;
     }
     to {
         opacity: 1;
         left: 0;
     }
+}
+
+/* TODO スマホ対応 */
+.cardList {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 20vw;
+    margin-top: 20px;
 }
 
 #main {
