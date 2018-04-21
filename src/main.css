@@ -21,14 +21,27 @@
 }
 
 /* TODO スマホ対応 */
-.cardList {
-    display: flex;
-    flex-wrap: wrap;
+
+@media (min-width: 768px) {
+    .cardList {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .card {
+        border-top: medium solid #ff00ff;
+        width: 20vw;
+    }
 }
 
-.card {
-    width: 20vw;
-    margin-top: 20px;
+@media (max-width: 767px) {
+    .cardList {
+        margin: 0 5vw;
+        display: flex;
+        flex-flow: column nowrap;
+    }
+    .card {
+        margin-top: 20px;
+    }
 }
 
 #main {
